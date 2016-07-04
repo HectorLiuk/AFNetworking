@@ -170,12 +170,66 @@ NSArray * AFQueryStringPairsFromKeyAndValue(NSString *key, id value) {
 @end
 
 #pragma mark -
-
+// 定义了一个static的方法，表示该方法只能在本文件中使用
+// 函数整体上使用了单例模式
 static NSArray * AFHTTPRequestSerializerObservedKeyPaths() {
     static NSArray *_AFHTTPRequestSerializerObservedKeyPaths = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+        // 此处需要observer的 keypath为 allowsCellularAccess、cachePolicy、HTTPShouldHandleCookies
+        // HTTPShouldUsePipelining、networkServiceType、timeoutInterval
+        // 这些都是NSMutableURLRequest的属性
         _AFHTTPRequestSerializerObservedKeyPaths = @[NSStringFromSelector(@selector(allowsCellularAccess)), NSStringFromSelector(@selector(cachePolicy)), NSStringFromSelector(@selector(HTTPShouldHandleCookies)), NSStringFromSelector(@selector(HTTPShouldUsePipelining)), NSStringFromSelector(@selector(networkServiceType)), NSStringFromSelector(@selector(timeoutInterval))];
+        
+        /**
+         是否允许使用设备的蜂窝移动网络来创建request，默认为允许:
+         */
+//        @property (nonatomic, assign) BOOL allowsCellularAccess;
+        
+        
+        
+        /**
+         创建的request所使用的缓存策略，默认使用`NSURLRequestUseProtocolCachePolicy`，该策略表示
+         如果缓存不存在，直接从服务端获取。如果缓存存在，会根据response中的Cache-Control字段判断
+         下一步操作，如: Cache-Control字段为must-revalidata, 则 询问服务端该数据是否有更新，无更新话
+         直接返回给用户缓存数据，若已更新，则请求服务端.
+         http://nshipster.cn/nsurlcache/
+         */
+//        @property (nonatomic, assign) NSURLRequestCachePolicy cachePolicy;
+        
+        
+        
+        /**
+         如果设置HTTPShouldHandleCookies为YES，就处理存储在NSHTTPCookieStore中的cookies
+         HTTPShouldHandleCookies表示是否应该给request设置cookie并随request一起发送出去
+         */
+//        @property (nonatomic, assign) BOOL HTTPShouldHandleCookies;
+        
+        
+        
+        /**
+         HTTPShouldUsePipelining表示receiver(理解为iOS客户端)的下一个信息是否必须等到上一个请求回复才能发送。
+         如果为YES表示可以，NO表示必须等receiver收到先前的回复才能发送下个信息。
+         */
+//        @property (nonatomic, assign) BOOL HTTPShouldUsePipelining;
+        
+        
+        
+        /**
+         设定request的network service类型. 默认是`NSURLNetworkServiceTypeDefault`.
+         这个network service是为了告诉系统网络层这个request使用的目的
+         比如NSURLNetworkServiceTypeVoIP表示的就这个request是用来请求网际协议通话技术(Voice over IP)。
+         系统能根据提供的信息来优化网络处理，从而优化电池寿命，网络性能等等
+         */
+//        @property (nonatomic, assign) NSURLRequestNetworkServiceType networkServiceType;
+        
+        
+        
+        /**
+         超时机制，默认60秒
+         */
+//        @property (nonatomic, assign) NSTimeInterval timeoutInterval;
+        
     });
 
     return _AFHTTPRequestSerializerObservedKeyPaths;
@@ -357,9 +411,11 @@ forHTTPHeaderField:(NSString *)field
                                 parameters:(id)parameters
                                      error:(NSError *__autoreleasing *)error
 {
-    NSParameterAssert(method);
+    //断言
+//    http://www.jianshu.com/p/7cea580441d3
+    NSParameterAssert(method); //这句话的意思  NSParameterAssert(method != nil) 如果为空则会抛出断言
     NSParameterAssert(URLString);
-
+    //NSSting 转化为 url
     NSURL *url = [NSURL URLWithString:URLString];
 
     NSParameterAssert(url);
