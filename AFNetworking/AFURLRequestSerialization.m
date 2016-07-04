@@ -297,6 +297,7 @@ static void *AFHTTPRequestSerializerObserverContext = &AFHTTPRequestSerializerOb
     self.mutableObservedChangedKeyPaths = [NSMutableSet set];
     for (NSString *keyPath in AFHTTPRequestSerializerObservedKeyPaths()) {
         if ([self respondsToSelector:NSSelectorFromString(keyPath)]) {
+            //添加观察者 给request属性观察
             [self addObserver:self forKeyPath:keyPath options:NSKeyValueObservingOptionNew context:AFHTTPRequestSerializerObserverContext];
         }
     }
@@ -423,12 +424,13 @@ forHTTPHeaderField:(NSString *)field
     NSMutableURLRequest *mutableRequest = [[NSMutableURLRequest alloc] initWithURL:url];
     mutableRequest.HTTPMethod = method;
 
+    //查找数组中是否包含这个方法 设置这几个属性·
     for (NSString *keyPath in AFHTTPRequestSerializerObservedKeyPaths()) {
         if ([self.mutableObservedChangedKeyPaths containsObject:keyPath]) {
             [mutableRequest setValue:[self valueForKeyPath:keyPath] forKey:keyPath];
         }
     }
-
+    //对request进行转码  变成一个请求
     mutableRequest = [[self requestBySerializingRequest:mutableRequest withParameters:parameters error:error] mutableCopy];
 
 	return mutableRequest;
@@ -526,7 +528,7 @@ forHTTPHeaderField:(NSString *)field
 }
 
 #pragma mark - AFURLRequestSerialization
-
+//对请求参数和请求头进行序列化
 - (NSURLRequest *)requestBySerializingRequest:(NSURLRequest *)request
                                withParameters:(id)parameters
                                         error:(NSError *__autoreleasing *)error
@@ -582,7 +584,7 @@ forHTTPHeaderField:(NSString *)field
 }
 
 #pragma mark - NSKeyValueObserving
-
+//关闭自动kvo改为手动kvo  但是手动kvo还是需要addObserve 只不过在setter方法里写 willChangeForKey 和 didChangeForKey
 + (BOOL)automaticallyNotifiesObserversForKey:(NSString *)key {
     if ([AFHTTPRequestSerializerObservedKeyPaths() containsObject:key]) {
         return NO;
@@ -597,6 +599,7 @@ forHTTPHeaderField:(NSString *)field
                        context:(void *)context
 {
     if (context == AFHTTPRequestSerializerObserverContext) {
+        //监控新值得变化
         if ([change[NSKeyValueChangeNewKey] isEqual:[NSNull null]]) {
             [self.mutableObservedChangedKeyPaths removeObject:keyPath];
         } else {
