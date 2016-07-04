@@ -124,7 +124,13 @@
                                                           success:success
                                                           failure:failure];
 
+    //开启这个请求
     [dataTask resume];
+    //    session task的几种状态的操作函数
+    //    suspend -- 可以让当前的任务暂停
+    //    resume ---- 方法不仅可以启动任务,还可以唤醒suspend状态的任务
+    //    cancel ----- 方法可以取消当前的任务,你也可以向处于suspend状态的任务发送cancel消息,任务如果被取消便不能再恢复到之前的状态.
+
 
     return dataTask;
 }

@@ -1,17 +1,17 @@
 // TweetTableViewCell.m
 //
 // Copyright (c) 2011–2016 Alamofire Software Foundation ( http://alamofire.org/ )
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -48,7 +48,7 @@
 
 - (void)setPost:(Post *)post {
     _post = post;
-
+    
     self.textLabel.text = _post.user.username;
     self.detailTextLabel.text = _post.text;
     [self.imageView setImageWithURL:_post.user.avatarImageURL placeholderImage:[UIImage imageNamed:@"profile-image-placeholder"]];
@@ -57,10 +57,12 @@
 }
 
 + (CGFloat)heightForCellWithPost:(Post *)post {
+    //fmaxf求两最大值
     return (CGFloat)fmaxf(70.0f, (float)[self detailTextHeight:post.text] + 45.0f);
 }
 
 + (CGFloat)detailTextHeight:(NSString *)text {
+    //自适应文字高度
     CGRect rectToFit = [text boundingRectWithSize:CGSizeMake(240.0f, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName: [UIFont systemFontOfSize:12.0f]} context:nil];
     return rectToFit.size.height;
 }

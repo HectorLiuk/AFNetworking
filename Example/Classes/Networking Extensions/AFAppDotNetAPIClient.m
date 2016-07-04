@@ -25,16 +25,19 @@
 static NSString * const AFAppDotNetAPIBaseURLString = @"https://api.app.net/";
 
 @implementation AFAppDotNetAPIClient
-
+/**
+ *  afn自己封装的一个网络请求单列
+ *
+ */
 + (instancetype)sharedClient {
     static AFAppDotNetAPIClient *_sharedClient = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _sharedClient = [[AFAppDotNetAPIClient alloc] initWithBaseURL:[NSURL URLWithString:AFAppDotNetAPIBaseURLString]];
+        //设置HTTP Client的安全策略为AFSSLPinningModeNone
         _sharedClient.securityPolicy = [AFSecurityPolicy policyWithPinningMode:AFSSLPinningModeNone];
     });
     
     return _sharedClient;
 }
-
 @end
