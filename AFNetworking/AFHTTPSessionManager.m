@@ -263,7 +263,7 @@
                                          failure:(void (^)(NSURLSessionDataTask *, NSError *))failure
 {
     NSError *serializationError = nil;
-    
+#pragma mark --------url请求 对get和post请求，参数的处理
     //使用指定的HTTP method和URLString来构建一个NSMutableURLRequest对象实例
     NSMutableURLRequest *request = [self.requestSerializer requestWithMethod:method URLString:[[NSURL URLWithString:URLString relativeToURL:self.baseURL] absoluteString] parameters:parameters error:&serializationError];
     
@@ -277,7 +277,7 @@
 
         return nil;
     }
-
+#pragma mark -----请求过程
     __block NSURLSessionDataTask *dataTask = nil;
     dataTask = [self dataTaskWithRequest:request
                           uploadProgress:uploadProgress
